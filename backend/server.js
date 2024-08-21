@@ -7,12 +7,7 @@ const fs = require("fs");
 
 // MongoDB
 mongoose
-  .connect("mongodb://localhost:27017/jobPortal", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
-  })
+  .connect("mongodb+srv://jain77282:Sumit@9829@cluster0.u3k8o.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",{dbName:"sumit",useNewUrlParser:true})
   .then((res) => console.log("Connected to DB"))
   .catch((err) => console.log(err));
 
