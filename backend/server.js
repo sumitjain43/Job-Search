@@ -7,9 +7,13 @@ const fs = require("fs");
 
 // MongoDB
 mongoose
-  .connect("mongodb+srv://jain77282:Sumit@9829@cluster0.u3k8o.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",{dbName:"sumit",useNewUrlParser:true})
-  .then((res) => console.log("Connected to DB"))
-  .catch((err) => console.log(err));
+.connect(process.env.MONGO_URI, {
+    dbName: process.env.DB_NAME,
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(() => console.log("✅ Connected to DB"))
+  .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
 // initialising directories
 if (!fs.existsSync("./public")) {
