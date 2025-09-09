@@ -1,6 +1,7 @@
 import { createContext, useState } from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { Grid, makeStyles } from "@material-ui/core";
+import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 
 import Welcome, { ErrorPage } from "./component/Welcome";
 import Navbar from "./component/Navbar";
@@ -17,6 +18,9 @@ import AcceptedApplicants from "./component/recruiter/AcceptedApplicants";
 import RecruiterProfile from "./component/recruiter/Profile";
 import MessagePopup from "./lib/MessagePopup";
 import isAuth, { userType } from "./lib/isAuth";
+import Assistant from "./component/Assistant";
+import Preferences from "./component/Preferences";
+import RecommendedJobs from "./component/RecommendedJobs";
 
 const useStyles = makeStyles((theme) => ({
   body: {
@@ -40,15 +44,24 @@ function App() {
     severity: "",
     message: "",
   });
+  const theme = createMuiTheme({
+    palette: {
+      primary: { main: "#5B6CFF" },
+      secondary: { main: "#00C2A8" },
+      background: { default: "#F7F8FC" },
+    },
+    typography: { fontFamily: "Inter, Roboto, Helvetica, Arial, sans-serif" },
+  });
   return (
     <BrowserRouter>
-      <SetPopupContext.Provider value={setPopup}>
-        <Grid container direction="column">
-          <Grid item xs>
-            <Navbar />
-          </Grid>
-          <Grid item className={classes.body}>
-            <Switch>
+      <ThemeProvider theme={theme}>
+        <SetPopupContext.Provider value={setPopup}>
+          <Grid container direction="column">
+            <Grid item xs>
+              <Navbar />
+            </Grid>
+            <Grid item className={classes.body}>
+              <Switch>
               <Route exact path="/">
                 <Welcome />
               </Route>
@@ -86,13 +99,22 @@ function App() {
               <Route exact path="/employees">
                 <AcceptedApplicants />
               </Route>
-              <Route>
-                <ErrorPage />
-              </Route>
-            </Switch>
+                <Route exact path="/assistant">
+                  <Assistant />
+                </Route>
+                <Route exact path="/preferences">
+                  <Preferences />
+                </Route>
+                <Route exact path="/recommended">
+                  <RecommendedJobs />
+                </Route>
+                <Route>
+                  <ErrorPage />
+                </Route>
+              </Switch>
+            </Grid>
           </Grid>
-        </Grid>
-        <MessagePopup
+          <MessagePopup
           open={popup.open}
           setOpen={(status) =>
             setPopup({
@@ -103,7 +125,8 @@ function App() {
           severity={popup.severity}
           message={popup.message}
         />
-      </SetPopupContext.Provider>
+        </SetPopupContext.Provider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }
