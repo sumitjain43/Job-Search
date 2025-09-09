@@ -10,6 +10,12 @@ const apiList = {
   rating: `${server}/api/rating`,
   user: `${server}/api/user`,
   applicants: `${server}/api/applicants`,
+  preferences: `${server}/api/preferences`,
+  aiChat: `${server}/ai/chat`,
+  aiExtractProfile: `${server}/ai/extract-profile`,
+  aiRecommendJobs: `${server}/ai/recommend-jobs`,
+  aiAutoApply: `${server}/ai/auto-apply`,
+  aiGenerateSop: `${server}/ai/generate-sop`,
 };
 
 export default apiList;

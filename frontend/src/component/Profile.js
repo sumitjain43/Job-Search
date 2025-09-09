@@ -13,10 +13,11 @@ import ChipInput from "material-ui-chip-input";
 import FileUploadInput from "../lib/FileUploadInput";
 import DescriptionIcon from "@material-ui/icons/Description";
 import FaceIcon from "@material-ui/icons/Face";
+import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 
 import { SetPopupContext } from "../App";
 
-import apiList from "../lib/apiList";
+import apiList, { server as backendServer } from "../lib/apiList";
 
 const useStyles = makeStyles((theme) => ({
   body: {
@@ -214,6 +215,40 @@ const Profile = (props) => {
     setOpen(false);
   };
 
+  const handleAutoFillFromResume = async () => {
+    try {
+      if (!profileDetails.resume) {
+        setPopup({ open: true, severity: "error", message: "Upload resume first" });
+        return;
+      }
+      const resumeUrl = `${backendServer}${profileDetails.resume}`;
+      const resp = await axios.post(
+        apiList.aiExtractProfile,
+        { resumeUrl },
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+      );
+      const data = resp.data || {};
+      setProfileDetails({
+        ...profileDetails,
+        name: data.name || profileDetails.name,
+        skills: Array.isArray(data.skills) ? data.skills : profileDetails.skills,
+        education: Array.isArray(data.education) ? data.education : profileDetails.education,
+      });
+      if (Array.isArray(data.education) && data.education.length > 0) {
+        setEducation(
+          data.education.map((edu) => ({
+            institutionName: edu.institutionName || "",
+            startYear: edu.startYear || "",
+            endYear: edu.endYear || "",
+          }))
+        );
+      }
+      setPopup({ open: true, severity: "success", message: "Profile fields extracted from resume" });
+    } catch (e) {
+      setPopup({ open: true, severity: "error", message: "Auto-fill failed" });
+    }
+  };
+
   return (
     <>
       <Grid
@@ -304,6 +339,15 @@ const Profile = (props) => {
               onClick={() => handleUpdate()}
             >
               Update Details
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              style={{ padding: "10px 30px", marginTop: "16px" }}
+              onClick={handleAutoFillFromResume}
+              startIcon={<CloudUploadIcon />}
+            >
+              Auto-fill from Resume
             </Button>
           </Paper>
         </Grid>
